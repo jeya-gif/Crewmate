@@ -1,0 +1,51 @@
+/* Default theme */
+:root {
+  --bg: #0b0f19;
+  --card: #151b2c;
+  --text: #ffffff;
+  --muted: #a0a0a0;
+  --btn: #2563eb;
+  --border: rgba(255, 255, 255, 0.1);
+}
+
+/* Light theme */
+body[data-theme="light"] {
+  --bg: #f5f5f5;
+  --card: #ffffff;
+  --text: #111;
+  --muted: #555;
+  --btn: #111;
+  --border: rgba(0, 0, 0, 0.15);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+
+a {
+  color: var(--text);
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.btn {
+  background: var(--btn);
+  color: white;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.muted {
+  color: var(--muted);
+}
