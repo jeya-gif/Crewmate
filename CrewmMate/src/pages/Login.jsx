@@ -42,7 +42,7 @@ const Login = () => {
   return (
     <div style={styles.page}>
       <div style={styles.card}>
-        <h1 style={styles.title}>Welcome Back 👋</h1>
+        <h1 style={styles.title}>Welcome Back </h1>
         <p style={styles.subtitle}>
           Login to continue using <b>CrewMate</b>
         </p>
