@@ -6,6 +6,7 @@ const CommentSection = ({ postId }) => {
   const { user } = useAuth();
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchComments = async () => {
     const { data, error } = await supabase
@@ -21,10 +22,13 @@ const CommentSection = ({ postId }) => {
     fetchComments();
   }, []);
 
+  // ADD COMMENT
   const handleAddComment = async (e) => {
     e.preventDefault();
 
     if (!commentText.trim()) return;
+
+    setLoading(true);
 
     const { error } = await supabase.from("comments").insert([
       {
@@ -34,10 +38,29 @@ const CommentSection = ({ postId }) => {
       },
     ]);
 
+    setLoading(false);
+
     if (error) {
       alert(error.message);
     } else {
       setCommentText("");
+      fetchComments();
+    }
+  };
+
+  // DELETE COMMENT
+  const handleDeleteComment = async (commentId) => {
+    const confirmDelete = window.confirm("Delete this comment?");
+    if (!confirmDelete) return;
+
+    const { error } = await supabase
+      .from("comments")
+      .delete()
+      .eq("id", commentId);
+
+    if (error) {
+      alert("Error deleting comment: " + error.message);
+    } else {
       fetchComments();
     }
   };
@@ -52,18 +75,34 @@ const CommentSection = ({ postId }) => {
           onChange={(e) => setCommentText(e.target.value)}
           style={styles.input}
         />
-        <button type="submit" style={styles.btn}>
-          Send
+
+        <button type="submit" style={styles.btn} disabled={loading}>
+          {loading ? "..." : "Send"}
         </button>
       </form>
 
-      <div>
+      <div style={styles.commentsBox}>
         {comments.length === 0 ? (
-          <p style={{ color: "gray" }}>No comments yet...</p>
+          <p style={styles.noComments}>No comments yet...</p>
         ) : (
           comments.map((c) => (
             <div key={c.id} style={styles.comment}>
-              <b>@{c.profiles?.username}</b>: {c.comment_text}
+              <div style={styles.commentText}>
+                <span style={styles.username}>
+                  @{c.profiles?.username || "unknown"}
+                </span>
+                <span style={styles.text}> {c.comment_text}</span>
+              </div>
+
+              {/* DELETE BUTTON ONLY FOR OWNER */}
+              {c.user_id === user.id && (
+                <button
+                  style={styles.deleteBtn}
+                  onClick={() => handleDeleteComment(c.id)}
+                >
+                  ✖
+                </button>
+              )}
             </div>
           ))
         )}
@@ -75,33 +114,85 @@ const CommentSection = ({ postId }) => {
 const styles = {
   wrapper: {
     marginTop: "15px",
-    padding: "10px",
-    background: "#fff",
-    borderRadius: "8px",
+    padding: "12px",
+    background: "var(--bg)",
+    borderRadius: "10px",
+    border: "1px solid var(--border)",
   },
+
   form: {
     display: "flex",
     gap: "10px",
-    marginBottom: "10px",
+    marginBottom: "12px",
   },
+
   input: {
     flex: 1,
     padding: "10px",
-    borderRadius: "6px",
-    border: "1px solid gray",
+    borderRadius: "8px",
+    border: "1px solid var(--border)",
+    background: "var(--card)",
+    color: "var(--text)",
+    outline: "none",
   },
+
   btn: {
     padding: "10px 15px",
-    background: "green",
+    background: "#16a34a",
     border: "none",
     color: "white",
     cursor: "pointer",
-    borderRadius: "6px",
+    borderRadius: "8px",
+    fontWeight: "600",
   },
+
+  commentsBox: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+  },
+
+  noComments: {
+    color: "var(--muted)",
+    margin: 0,
+  },
+
   comment: {
-    padding: "6px",
-    borderBottom: "1px solid #ddd",
+    padding: "10px 12px",
+    borderRadius: "8px",
+    background: "var(--card)",
+    border: "1px solid var(--border)",
     fontSize: "14px",
+    color: "var(--text)",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "10px",
+  },
+
+  commentText: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "5px",
+    flex: 1,
+  },
+
+  username: {
+    fontWeight: "700",
+    color: "var(--text)",
+  },
+
+  text: {
+    color: "var(--text)",
+  },
+
+  deleteBtn: {
+    border: "none",
+    background: "transparent",
+    color: "crimson",
+    fontSize: "14px",
+    cursor: "pointer",
+    fontWeight: "bold",
   },
 };
 
