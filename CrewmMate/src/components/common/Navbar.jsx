@@ -42,6 +42,10 @@ const Navbar = () => {
           Notifications
         </Link>
 
+        <Link style={styles.link} to="/ai-chat">
+          🤖 AI
+        </Link>
+
         <button style={styles.themeBtn} onClick={toggleTheme}>
           {theme === "dark" ? "☀ Light" : "🌙 Dark"}
         </button>

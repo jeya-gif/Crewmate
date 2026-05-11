@@ -11,6 +11,7 @@ import UserProfile from "../pages/UserProfile";
 import Notifications from "../pages/Notifications";
 import Inbox from "../pages/Inbox";
 import Chat from "../pages/Chat";
+import AiChat from "../pages/AiChat";
 
 
 const AppRoutes = () => {
@@ -89,7 +90,10 @@ const AppRoutes = () => {
     </ProtectedRoute>
   }
 />
-
+<Route
+  path="/ai-chat"
+  element={<AiChat />}
+/>
 <Route
   path="/chat/:conversationId"
   element={
